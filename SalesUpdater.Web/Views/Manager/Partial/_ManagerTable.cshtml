@@ -1,0 +1,50 @@
+﻿@using SalesUpdater.Web.Data.Models.Filters
+@using X.PagedList.Mvc;
+@using X.PagedList;
+@using X.PagedList.Mvc.Common
+@model IPagedList<SalesUpdater.Web.Data.Models.ManagerViewModel>
+
+<div class="alert alert-danger" role="alert">
+    @ViewBag.Error
+</div>
+
+@if (Model != null)
+{
+    <table class="table" id="table">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.First().Surname)
+            </th>
+            <th>
+                Actions
+            </th>
+        </tr>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Surname)
+                </td>
+                <td>
+                    <div class="btn-group" role="group" aria-label="Basic example">
+                        @Html.ActionLink("Edit", "Edit", new { id = item.ID }, new { @class = "btn btn-primary" })
+                        @Html.ActionLink("Delete", "Delete", new { id = item.ID }, new
+                        {
+                            @class = "btn btn-primary",
+                            onclick = "return confirm('Are you sure you wish to delete this Manager?');"
+                        })
+                    </div>
+                </td>
+            </tr>
+        }
+
+    </table>
+
+    @Html.PagedListPager(Model, page => Url.Action("Find", "Manager", new ManagerFilterViewModel { Page = page, Surname = ViewBag.ManagerFilterLastNameValue }),
+        PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions { HttpMethod = "GET", UpdateTargetId = "updatedTableWithAjax" }))
+
+}
+else
+{
+    <p>No Manager List.</p>
+}

@@ -1,0 +1,36 @@
+﻿@model SalesUpdater.Web.Data.Models.ClientViewModel
+
+@{
+    ViewBag.Title = "Create";
+}
+
+<h2>Add Client</h2>
+<hr />
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+
+        <h3>@ViewBag.Error</h3>
+
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.Partial("~/Views/Client/Partial/_Client.cshtml", Model)
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

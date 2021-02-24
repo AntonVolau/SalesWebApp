@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="6.1.0" />
+    <PackageReference Include="EntityFramework" Version="6.4.4" />
+    <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="5.0.0" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
+    <PackageReference Include="X.PagedList" Version="7.6.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SalesUpdater.Core\SalesUpdater.Core.csproj" />
+    <ProjectReference Include="..\SalesUpdater.DAL\SalesUpdater.DAL.csproj" />
+    <ProjectReference Include="..\SalesUpdater.Entity\SalesUpdater.Entity.csproj" />
+    <ProjectReference Include="..\SalesUpdater.Interfaces\SalesUpdater.Interfaces.csproj" />
+  </ItemGroup>
+
+</Project>

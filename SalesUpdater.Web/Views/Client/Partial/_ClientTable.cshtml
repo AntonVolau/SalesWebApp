@@ -1,0 +1,59 @@
+﻿@using SalesUpdater.Web.Data.Models.Filters
+@using X.PagedList.Mvc;
+@using X.PagedList;
+@using X.PagedList.Mvc.Common
+@model IPagedList<SalesUpdater.Web.Data.Models.ClientViewModel>
+
+<div class="alert alert-danger" role="alert">
+    @ViewBag.Error
+</div>
+
+@if (Model != null)
+{
+    <table class="table">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.First().Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().Surname)
+            </th>
+            <th></th>
+        </tr>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Surname)
+                </td>
+                <td>
+                    <div class="btn-group" role="group" aria-label="Basic example">
+                        @Html.ActionLink("Edit", "Edit", new { id = item.ID }, new { @class = "btn btn-primary" })
+                        @Html.ActionLink("Delete", "Delete", new { id = item.ID }, new
+                        {
+                            @class = "btn btn-primary",
+                            onclick = "return confirm('Are you sure you wish to delete this Client?');"
+                        })
+                    </div>
+                </td>
+            </tr>
+        }
+
+
+    </table>
+
+    @Html.PagedListPager(Model, page => Url.Action("Find", "Client", new ClientFilterViewModel
+{
+    Page = page,
+    Name = ViewBag.ClientFilterFirstNameValue,
+    Surname = ViewBag.ClientFilterLastNameValue
+}),
+        PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions { HttpMethod = "GET", UpdateTargetId = "updatedTableWithAjax" }))
+}
+else
+{
+    <p>No Client List.</p>
+}

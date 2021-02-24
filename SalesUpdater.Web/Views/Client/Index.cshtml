@@ -1,0 +1,21 @@
+﻿@using SalesUpdater.Web.Data.Models.Filters
+@using X.PagedList;
+@model IPagedList<SalesUpdater.Web.Data.Models.ClientViewModel>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>All Clients</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-primary" })
+</p>
+
+<div id="filterDiv">
+    @Html.Partial("Partial/_ClientFilter", (ClientFilterViewModel)ViewBag.ClientFilter)
+</div>
+
+<div id="updatedTableWithAjax">
+    @Html.Partial("~/Views/Client/Partial/_ClientTable.cshtml", Model)
+</div>

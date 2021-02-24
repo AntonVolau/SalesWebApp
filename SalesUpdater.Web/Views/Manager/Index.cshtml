@@ -1,0 +1,22 @@
+﻿@using X.PagedList.Mvc;
+@using SalesUpdater.Web.Data.Models.Filters
+@using X.PagedList;
+@model IPagedList<SalesUpdater.Web.Data.Models.ManagerViewModel>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>All Managers</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-primary" })
+</p>
+
+<div id="filterDiv">
+    @Html.Partial("~/Views/Manager/Partial/_ManagerFilter.cshtml", (ManagerFilterViewModel)ViewBag.ManagerFilter)
+</div>
+
+<div id="updatedTableWithAjax">
+    @Html.Partial("~/Views/Manager/Partial/_ManagerTable.cshtml", Model)
+</div>

@@ -1,0 +1,51 @@
+﻿@using SalesUpdater.Web.Data.Models.Filters
+@using X.PagedList.Mvc;
+@using X.PagedList;
+@using X.PagedList.Mvc.Common
+@model IPagedList<SalesUpdater.Web.Data.Models.ProductViewModel>
+
+<div class="alert alert-danger" role="alert">
+    @ViewBag.Error
+</div>
+
+@if (Model != null)
+{
+    <table class="table" id="table">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.First().Name)
+            </th>
+            <th>
+                Actions
+            </th>
+        </tr>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    <div class="btn-group" role="group" aria-label="Basic example">
+                        @Html.ActionLink("Edit", "Edit", new { id = item.ID }, new { @class = "btn btn-primary" })
+                        @Html.ActionLink("Delete", "Delete", new { id = item.ID }, new
+                        {
+                            @class = "btn btn-primary",
+                            onclick = "return confirm('Are you sure you wish to delete this Product?');"
+                        })
+                    </div>
+                </td>
+            </tr>
+        }
+
+    </table>
+
+
+
+    @Html.PagedListPager(Model, page => Url.Action("Find", "Product", new ProductFilterViewModel { Page = page, Name = ViewBag.ProductFilterNameValue }),
+        PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions { HttpMethod = "GET", UpdateTargetId = "updatedTableWithAjax" }))
+}
+else
+{
+    <p>No Product List.</p>
+}

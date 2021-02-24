@@ -1,0 +1,21 @@
+﻿@model SalesUpdater.Web.Data.Models.Filters.ManagerFilterViewModel
+
+<script src="@Url.Content("~/Scripts/jquery-1.8.0.js")"></script>
+<script src="@Url.Content("~/Scripts/jquery.unobtrusive-ajax.js")"></script>
+
+@using (Ajax.BeginForm("Find", "Manager", new AjaxOptions()
+{
+    HttpMethod = "GET",
+    UpdateTargetId = "updatedTableWithAjax",
+    InsertionMode = InsertionMode.Replace
+}))
+{
+    <div class="input-group">
+        <span class="input-group-btn">
+            <input class="btn btn-primary" type="submit" value="Search" />
+        </span>
+        @Html.EditorFor(model => model.Surname, new { htmlAttributes = new { @class = "form-control", placeholder = "Surname" } })
+        @Html.ValidationMessageFor(model => model.Surname, "", new { @class = "text-danger" })
+    </div>
+}
+
