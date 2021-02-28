@@ -44,61 +44,28 @@ namespace SalesUpdater.DAL.ReaderWriter.Implementation
 
         public async Task<SaleDTO> AddAsync(SaleDTO sale)
         {
-           // Locker.EnterWriteLock();
-           // try
-           // {
                 await FindOutIds(sale).ConfigureAwait(false);
 
                 var result = Sales.Add(sale);
                 await Sales.SaveAsync().ConfigureAwait(false);
 
                 return result;
-          // }
-          // finally
-          // {
-          //     if (Locker.IsWriteLockHeld)
-          //     {
-          //         Locker.ExitWriteLock();
-          //     }
-          // }
         }
 
         public async Task<SaleDTO> UpdateAsync(SaleDTO sale)
         {
-           // Locker.EnterWriteLock();
-           // try
-           // {
                 await FindOutIds(sale).ConfigureAwait(false);
 
                 var result = Sales.Update(sale);
                 await Sales.SaveAsync().ConfigureAwait(false);
 
                 return result;
-           // }
-           // finally
-           // {
-           //     if (Locker.IsWriteLockHeld)
-           //     {
-           //         Locker.ExitWriteLock();
-           //     }
-           // }
         }
 
         public async Task DeleteAsync(int id)
         {
-          //  Locker.EnterReadLock();
-          //  try
-          //  {
                 await Sales.DeleteAsync(id).ConfigureAwait(false);
                 await Sales.SaveAsync().ConfigureAwait(false);
-           // }
-           // finally
-           // {
-           //     if (Locker.IsReadLockHeld)
-           //     {
-           //         Locker.ExitReadLock();
-           //     }
-           // }
         }
 
         public async Task<IEnumerable<SaleDTO>> FindAsync(Expression<Func<SaleDTO, bool>> predicate)

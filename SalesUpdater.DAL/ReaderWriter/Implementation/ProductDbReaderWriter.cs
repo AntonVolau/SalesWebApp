@@ -22,8 +22,6 @@ namespace SalesUpdater.DAL.ReaderWriter.Implementation
         {
             Context = context;
 
-            // Locker = locker;
-
             var mapper = AutoMapper.CreateConfiguration().CreateMapper();
 
             Products = new ProductRepository(Context, mapper);
@@ -42,9 +40,6 @@ namespace SalesUpdater.DAL.ReaderWriter.Implementation
 
         public async Task<ProductDTO> AddAsync(ProductDTO product)
         {
-           // Locker.EnterWriteLock();
-           // try
-           // {
                 if (await Products.TryAddProductAsync(product).ConfigureAwait(false))
                 {
                     await Products.SaveAsync().ConfigureAwait(false);
@@ -55,21 +50,10 @@ namespace SalesUpdater.DAL.ReaderWriter.Implementation
                 {
                     throw new ArgumentException("Product already exists!");
                 }
-         //  }
-         //  finally
-         //  {
-         //      if (Locker.IsWriteLockHeld)
-         //      {
-         //          Locker.ExitWriteLock();
-         //      }
-         //  }
         }
 
         public async Task<ProductDTO> UpdateAsync(ProductDTO product)
         {
-          //  Locker.EnterWriteLock();
-          //  try
-          //  {
                 if (await Products.DoesProductExistAsync(product).ConfigureAwait(false))
                     throw new ArgumentException("Product already exists!");
 
@@ -77,31 +61,12 @@ namespace SalesUpdater.DAL.ReaderWriter.Implementation
                 await Products.SaveAsync().ConfigureAwait(false);
 
                 return result;
-          // }
-          // finally
-          // {
-          //     if (Locker.IsWriteLockHeld)
-          //     {
-          //         Locker.ExitWriteLock();
-          //     }
-          // }
         }
 
         public async Task DeleteAsync(int id)
         {
-           // Locker.EnterReadLock();
-           // try
-           // {
                 await Products.DeleteAsync(id).ConfigureAwait(false);
                 await Products.SaveAsync().ConfigureAwait(false);
-          // }
-          // finally
-          // {
-          //     if (Locker.IsReadLockHeld)
-          //     {
-          //         Locker.ExitReadLock();
-          //     }
-          // }
         }
 
         public async Task<IEnumerable<ProductDTO>> FindAsync(Expression<Func<ProductDTO, bool>> predicate)

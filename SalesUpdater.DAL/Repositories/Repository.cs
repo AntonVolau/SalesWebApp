@@ -127,6 +127,7 @@ namespace SalesUpdater.DAL.Repositories
                 try
                 {
                     DbSet.Add(entity);
+
                     var z = _context.Entry(entity).State;
                 }
                 catch (Exception x)
@@ -138,7 +139,18 @@ namespace SalesUpdater.DAL.Repositories
             {
                 DbSet.Remove(entity);
                 var kek = _context.Entry(entity).State;
-                _context.Entry(entity).State = EntityState.Deleted;
+             //   var local = DbSet.Local;
+             //   if (local != null && local.Count != 0)
+             //   {
+             //       local.Clear();
+             //       var newlocal = DbSet.Local;
+             //       _context.Entry(entity).State = EntityState.Deleted;
+             //   }
+             //   else
+             //   {
+             //   _context.Entry(entity).State = EntityState.Deleted;
+             //   }
+                 _context.Entry(entity).State = EntityState.Deleted;
             }
             catch (Exception e)
             {

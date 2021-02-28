@@ -271,7 +271,6 @@ namespace SalesUpdater.Web.Data.Controllers
                 AddErrors(result);
             }
 
-            // If we got this far, something failed, redisplay form
             return View(model);
         }
 
@@ -332,7 +331,6 @@ namespace SalesUpdater.Web.Data.Controllers
             base.Dispose(disposing);
         }
 
-        // Used for XSRF protection when adding external logins
         private const string XsrfKey = "XsrfId";
 
         private IAuthenticationManager AuthenticationManager
