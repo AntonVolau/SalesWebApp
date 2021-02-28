@@ -16,25 +16,23 @@ namespace SalesUpdater.DAL.ReaderWriter.Implementation
     {
         private SalesContext Context { get; }
 
-        private ReaderWriterLockSlim Locker { get; }
-
         private IProductRepository Products { get; }
 
-        public ProductDbReaderWriter(SalesContext context, ReaderWriterLockSlim locker)
+        public ProductDbReaderWriter(SalesContext context)
         {
             Context = context;
 
-            Locker = locker;
+            // Locker = locker;
 
             var mapper = AutoMapper.CreateConfiguration().CreateMapper();
 
             Products = new ProductRepository(Context, mapper);
         }
 
-        public async Task<IPagedList<ProductDTO>> GetUsingPagedListAsync(int number, int size,
+        public async Task<IPagedList<ProductDTO>> GetPagedListAsync(int number, int size,
             Expression<Func<ProductDTO, bool>> predicate = null, SortDirection sortDirection = SortDirection.Ascending)
         {
-            return await Products.GetUsingPagedListAsync(number, size, predicate).ConfigureAwait(false);
+            return await Products.GetPagedListAsync(number, size, predicate).ConfigureAwait(false);
         }
 
         public async Task<ProductDTO> GetAsync(int id)
@@ -44,10 +42,10 @@ namespace SalesUpdater.DAL.ReaderWriter.Implementation
 
         public async Task<ProductDTO> AddAsync(ProductDTO product)
         {
-            Locker.EnterWriteLock();
-            try
-            {
-                if (await Products.TryAddUniqueProductAsync(product).ConfigureAwait(false))
+           // Locker.EnterWriteLock();
+           // try
+           // {
+                if (await Products.TryAddProductAsync(product).ConfigureAwait(false))
                 {
                     await Products.SaveAsync().ConfigureAwait(false);
                     return await GetAsync(await Products.GetIdAsync(product.Name)
@@ -57,21 +55,21 @@ namespace SalesUpdater.DAL.ReaderWriter.Implementation
                 {
                     throw new ArgumentException("Product already exists!");
                 }
-            }
-            finally
-            {
-                if (Locker.IsWriteLockHeld)
-                {
-                    Locker.ExitWriteLock();
-                }
-            }
+         //  }
+         //  finally
+         //  {
+         //      if (Locker.IsWriteLockHeld)
+         //      {
+         //          Locker.ExitWriteLock();
+         //      }
+         //  }
         }
 
         public async Task<ProductDTO> UpdateAsync(ProductDTO product)
         {
-            Locker.EnterWriteLock();
-            try
-            {
+          //  Locker.EnterWriteLock();
+          //  try
+          //  {
                 if (await Products.DoesProductExistAsync(product).ConfigureAwait(false))
                     throw new ArgumentException("Product already exists!");
 
@@ -79,31 +77,31 @@ namespace SalesUpdater.DAL.ReaderWriter.Implementation
                 await Products.SaveAsync().ConfigureAwait(false);
 
                 return result;
-            }
-            finally
-            {
-                if (Locker.IsWriteLockHeld)
-                {
-                    Locker.ExitWriteLock();
-                }
-            }
+          // }
+          // finally
+          // {
+          //     if (Locker.IsWriteLockHeld)
+          //     {
+          //         Locker.ExitWriteLock();
+          //     }
+          // }
         }
 
         public async Task DeleteAsync(int id)
         {
-            Locker.EnterReadLock();
-            try
-            {
+           // Locker.EnterReadLock();
+           // try
+           // {
                 await Products.DeleteAsync(id).ConfigureAwait(false);
                 await Products.SaveAsync().ConfigureAwait(false);
-            }
-            finally
-            {
-                if (Locker.IsReadLockHeld)
-                {
-                    Locker.ExitReadLock();
-                }
-            }
+          // }
+          // finally
+          // {
+          //     if (Locker.IsReadLockHeld)
+          //     {
+          //         Locker.ExitReadLock();
+          //     }
+          // }
         }
 
         public async Task<IEnumerable<ProductDTO>> FindAsync(Expression<Func<ProductDTO, bool>> predicate)

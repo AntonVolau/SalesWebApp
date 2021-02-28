@@ -9,14 +9,14 @@ using X.PagedList;
 
 namespace SalesUpdater.Web.Data.Contracts.Services
 {
-    public interface IService<TDTO, in TFilterCoreModel>
+    public interface IService<TDTO, in TCoreFilterModel>
         where TDTO : CoreModel
-        where TFilterCoreModel : PagedListParameterCoreModel
+        where TCoreFilterModel : PagedListParameterCoreModel
     {
-        Task<IPagedList<TDTO>> GetUsingPagedListAsync(int pageNumber, int pageSize,
+        Task<IPagedList<TDTO>> GetPagedListAsync(int pageNumber, int pageSize,
             Expression<Func<TDTO, bool>> predicate = null, SortDirection sortDirection = SortDirection.Ascending);
 
-        Task<IPagedList<TDTO>> Filter(TFilterCoreModel filterCoreModel, int pageSize,
+        Task<IPagedList<TDTO>> Filter(TCoreFilterModel filterCoreModel, int pageSize,
             SortDirection sortDirection = SortDirection.Ascending);
 
         Task<TDTO> GetAsync(int id);

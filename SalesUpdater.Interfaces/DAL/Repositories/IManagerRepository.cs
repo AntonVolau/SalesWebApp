@@ -9,7 +9,7 @@ namespace SalesUpdater.Interfaces.DAL.Repositories
 
         int GetId(string managerSurname);
 
-        Task<bool> TryAddUniqueManagerAsync(ManagerDTO managerCoreModel);
+        Task<bool> TryAddManagerAsync(ManagerDTO managerCoreModel);
 
         Task<int> GetIdAsync(string managerLastName);
 

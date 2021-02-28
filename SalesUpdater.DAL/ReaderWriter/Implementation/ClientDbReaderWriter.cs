@@ -16,26 +16,24 @@ namespace SalesUpdater.DAL.ReaderWriter.Implementation
     {
         private SalesContext Context { get; }
 
-        private ReaderWriterLockSlim Locker { get; }
-
         private IClientRepository Clients { get; }
 
-        public ClientDbReaderWriter(SalesContext context, ReaderWriterLockSlim locker)
+        public ClientDbReaderWriter(SalesContext context)
         {
             Context = context;
 
-            Locker = locker;
+            // Locker = locker;
 
             var mapper = AutoMapper.CreateConfiguration().CreateMapper();
 
             Clients = new ClientRepository(Context, mapper);
         }
 
-        public async Task<IPagedList<ClientDTO>> GetUsingPagedListAsync(int number, int size,
+        public async Task<IPagedList<ClientDTO>> GetPagedListAsync(int number, int size,
             Expression<Func<ClientDTO, bool>> predicate = null,
             SortDirection sortDirection = SortDirection.Ascending)
         {
-            return await Clients.GetUsingPagedListAsync(number, size, predicate).ConfigureAwait(false);
+            return await Clients.GetPagedListAsync(number, size, predicate).ConfigureAwait(false);
         }
 
         public async Task<ClientDTO> GetAsync(int id)
@@ -45,10 +43,10 @@ namespace SalesUpdater.DAL.ReaderWriter.Implementation
 
         public async Task<ClientDTO> AddAsync(ClientDTO client)
         {
-            Locker.EnterWriteLock();
-            try
-            {
-                if (await Clients.TryAddUniqueClientAsync(client).ConfigureAwait(false))
+          // Locker.EnterWriteLock();
+          // try
+          // {
+                if (await Clients.TryAddClientAsync(client).ConfigureAwait(false))
                 {
                     await Clients.SaveAsync().ConfigureAwait(false);
                     return await GetAsync(await Clients.GetIdAsync(client.Name, client.Surname)
@@ -58,21 +56,21 @@ namespace SalesUpdater.DAL.ReaderWriter.Implementation
                 {
                     throw new ArgumentException("Client already exists!");
                 }
-            }
-            finally
-            {
-                if (Locker.IsWriteLockHeld)
-                {
-                    Locker.ExitWriteLock();
-                }
-            }
+         //  }
+         //  finally
+         //  {
+         //      if (Locker.IsWriteLockHeld)
+         //      {
+         //          Locker.ExitWriteLock();
+         //      }
+         //  }
         }
 
         public async Task<ClientDTO> UpdateAsync(ClientDTO client)
         {
-            Locker.EnterWriteLock();
-            try
-            {
+          //  Locker.EnterWriteLock();
+          //  try
+          //  {
                 if (await Clients.DoesClientExistAsync(client).ConfigureAwait(false))
                     throw new ArgumentException("Client already exists!");
 
@@ -80,31 +78,31 @@ namespace SalesUpdater.DAL.ReaderWriter.Implementation
                 await Clients.SaveAsync().ConfigureAwait(false);
 
                 return result;
-            }
-            finally
-            {
-                if (Locker.IsWriteLockHeld)
-                {
-                    Locker.ExitWriteLock();
-                }
-            }
+          // }
+          // finally
+          // {
+          //     if (Locker.IsWriteLockHeld)
+          //     {
+          //         Locker.ExitWriteLock();
+          //     }
+          // }
         }
 
         public async Task DeleteAsync(int id)
         {
-            Locker.EnterReadLock();
-            try
-            {
+            //Locker.EnterReadLock();
+            //try
+            //{
                 await Clients.DeleteAsync(id).ConfigureAwait(false);
                 await Clients.SaveAsync().ConfigureAwait(false);
-            }
-            finally
-            {
-                if (Locker.IsReadLockHeld)
-                {
-                    Locker.ExitReadLock();
-                }
-            }
+            //}
+            //finally
+            //{
+            //    if (Locker.IsReadLockHeld)
+            //    {
+            //        Locker.ExitReadLock();
+            //    }
+            //}
         }
 
         public async Task<IEnumerable<ClientDTO>> FindAsync(Expression<Func<ClientDTO, bool>> predicate)

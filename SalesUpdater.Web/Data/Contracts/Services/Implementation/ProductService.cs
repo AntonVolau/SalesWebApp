@@ -6,7 +6,6 @@ using SalesUpdater.Web.Data.Models.Filters;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Helpers;
 using X.PagedList;
@@ -17,37 +16,33 @@ namespace SalesUpdater.Web.Data.Contracts.Services.Implementation
     {
         private SalesContext Context { get; }
 
-        private ReaderWriterLockSlim Locker { get; }
-
         private IProductDbReaderWriter ProductDbReaderWriter { get; }
 
         public ProductService()
         {
             Context = new SalesContext();
 
-            Locker = new ReaderWriterLockSlim();
-
-            ProductDbReaderWriter = new ProductDbReaderWriter(Context, Locker);
+            ProductDbReaderWriter = new ProductDbReaderWriter(Context);
         }
 
-        public async Task<IPagedList<ProductDTO>> GetUsingPagedListAsync(int pageNumber, int pageSize,
+        public async Task<IPagedList<ProductDTO>> GetPagedListAsync(int pageNumber, int pageSize,
             Expression<Func<ProductDTO, bool>> predicate = null, SortDirection sortDirection = SortDirection.Ascending)
         {
-            return await ProductDbReaderWriter.GetUsingPagedListAsync(pageNumber, pageSize, predicate)
+            return await ProductDbReaderWriter.GetPagedListAsync(pageNumber, pageSize, predicate)
                 .ConfigureAwait(false);
         }
 
-        public async Task<IPagedList<ProductDTO>> Filter(ProductFilterCoreModel productFilterCoreModel,
+        public async Task<IPagedList<ProductDTO>> Filter(ProductCoreFilterModel productCoreFilterModel,
             int pageSize, SortDirection sortDirection = SortDirection.Ascending)
         {
-            if (productFilterCoreModel.Name == null)
+            if (productCoreFilterModel.Name == null)
             {
-                return await GetUsingPagedListAsync(productFilterCoreModel.Page ?? 1, pageSize)
+                return await GetPagedListAsync(productCoreFilterModel.Page ?? 1, pageSize)
                     .ConfigureAwait(false);
             }
 
-            return await GetUsingPagedListAsync(productFilterCoreModel.Page ?? 1,
-                    pageSize, x => x.Name.Contains(productFilterCoreModel.Name))
+            return await GetPagedListAsync(productCoreFilterModel.Page ?? 1,
+                    pageSize, x => x.Name.Contains(productCoreFilterModel.Name))
                 .ConfigureAwait(false);
         }
 
@@ -84,7 +79,6 @@ namespace SalesUpdater.Web.Data.Contracts.Services.Implementation
             {
                 if (disposing)
                 {
-                    Locker.Dispose();
                     Context.Dispose();
                 }
             }

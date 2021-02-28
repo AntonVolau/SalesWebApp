@@ -29,7 +29,7 @@ namespace SalesUpdater.DAL.Repositories
 
             return Find(predicate).First().ID;
         }
-        public async Task<bool> TryAddUniqueProductAsync(ProductDTO productCoreModel)
+        public async Task<bool> TryAddProductAsync(ProductDTO productCoreModel)
         {
             if (await DoesProductExistAsync(productCoreModel).ConfigureAwait(false))
             {

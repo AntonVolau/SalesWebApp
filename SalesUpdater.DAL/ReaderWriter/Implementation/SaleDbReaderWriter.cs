@@ -5,7 +5,6 @@ using SalesUpdater.Interfaces.DAL.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Helpers;
 using X.PagedList;
@@ -15,17 +14,15 @@ namespace SalesUpdater.DAL.ReaderWriter.Implementation
     public class SaleDbReaderWriter : ISaleDbReaderWriter
     {
         private SalesContext Context { get; }
-        private ReaderWriterLockSlim Locker { get; }
 
         private IClientRepository Clients { get; }
         private IManagerRepository Managers { get; }
         private IProductRepository Products { get; }
         private ISaleRepository Sales { get; }
 
-        public SaleDbReaderWriter(SalesContext context, ReaderWriterLockSlim locker)
+        public SaleDbReaderWriter(SalesContext context)
         {
             Context = context;
-            Locker = locker;
 
             var mapper = AutoMapper.CreateConfiguration().CreateMapper();
             Clients = new ClientRepository(Context, mapper);
@@ -34,10 +31,10 @@ namespace SalesUpdater.DAL.ReaderWriter.Implementation
             Sales = new SaleRepository(Context, mapper);
         }
 
-        public async Task<IPagedList<SaleDTO>> GetUsingPagedListAsync(int number, int size,
+        public async Task<IPagedList<SaleDTO>> GetPagedListAsync(int number, int size,
             Expression<Func<SaleDTO, bool>> predicate = null, SortDirection sortDirection = SortDirection.Ascending)
         {
-            return await Sales.GetUsingPagedListAsync(number, size, predicate).ConfigureAwait(false);
+            return await Sales.GetPagedListAsync(number, size, predicate).ConfigureAwait(false);
         }
 
         public async Task<SaleDTO> GetAsync(int id)
@@ -47,61 +44,61 @@ namespace SalesUpdater.DAL.ReaderWriter.Implementation
 
         public async Task<SaleDTO> AddAsync(SaleDTO sale)
         {
-            Locker.EnterWriteLock();
-            try
-            {
+           // Locker.EnterWriteLock();
+           // try
+           // {
                 await FindOutIds(sale).ConfigureAwait(false);
 
                 var result = Sales.Add(sale);
                 await Sales.SaveAsync().ConfigureAwait(false);
 
                 return result;
-            }
-            finally
-            {
-                if (Locker.IsWriteLockHeld)
-                {
-                    Locker.ExitWriteLock();
-                }
-            }
+          // }
+          // finally
+          // {
+          //     if (Locker.IsWriteLockHeld)
+          //     {
+          //         Locker.ExitWriteLock();
+          //     }
+          // }
         }
 
         public async Task<SaleDTO> UpdateAsync(SaleDTO sale)
         {
-            Locker.EnterWriteLock();
-            try
-            {
+           // Locker.EnterWriteLock();
+           // try
+           // {
                 await FindOutIds(sale).ConfigureAwait(false);
 
                 var result = Sales.Update(sale);
                 await Sales.SaveAsync().ConfigureAwait(false);
 
                 return result;
-            }
-            finally
-            {
-                if (Locker.IsWriteLockHeld)
-                {
-                    Locker.ExitWriteLock();
-                }
-            }
+           // }
+           // finally
+           // {
+           //     if (Locker.IsWriteLockHeld)
+           //     {
+           //         Locker.ExitWriteLock();
+           //     }
+           // }
         }
 
         public async Task DeleteAsync(int id)
         {
-            Locker.EnterReadLock();
-            try
-            {
+          //  Locker.EnterReadLock();
+          //  try
+          //  {
                 await Sales.DeleteAsync(id).ConfigureAwait(false);
                 await Sales.SaveAsync().ConfigureAwait(false);
-            }
-            finally
-            {
-                if (Locker.IsReadLockHeld)
-                {
-                    Locker.ExitReadLock();
-                }
-            }
+           // }
+           // finally
+           // {
+           //     if (Locker.IsReadLockHeld)
+           //     {
+           //         Locker.ExitReadLock();
+           //     }
+           // }
         }
 
         public async Task<IEnumerable<SaleDTO>> FindAsync(Expression<Func<SaleDTO, bool>> predicate)
@@ -118,7 +115,7 @@ namespace SalesUpdater.DAL.ReaderWriter.Implementation
             }
             else
             {
-                ThrowArgumentException("There is no such Client. Register it!");
+                ThrowArgumentException("Client not found");
             }
 
             if (await Managers.DoesManagerExistAsync(sale.Managers))
@@ -127,7 +124,7 @@ namespace SalesUpdater.DAL.ReaderWriter.Implementation
             }
             else
             {
-                ThrowArgumentException("There is no such Manager. Register it!");
+                ThrowArgumentException("Mfnfger not found");
             }
 
             if (await Products.DoesProductExistAsync(sale.Products))
@@ -136,7 +133,7 @@ namespace SalesUpdater.DAL.ReaderWriter.Implementation
             }
             else
             {
-                ThrowArgumentException("There is no such Product. Register it!");
+                ThrowArgumentException("Product not found");
             }
         }
 

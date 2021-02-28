@@ -26,7 +26,7 @@ namespace SalesUpdater.Web.Data.Controllers
                 return View();
             }
 
-            ViewBag.Name = "Not Logged IN";
+            ViewBag.Name = "Not Logged In";
             return View();
         }
 

@@ -16,7 +16,7 @@ namespace SalesUpdater.DAL.ReaderWriter
 
         Task DeleteAsync(int id);
 
-        Task<IPagedList<TCoreModel>> GetUsingPagedListAsync(int pageNumber, int pageSize,
+        Task<IPagedList<TCoreModel>> GetPagedListAsync(int pageNumber, int pageSize,
             Expression<Func<TCoreModel, bool>> predicate = null, SortDirection sortDirection = SortDirection.Ascending);
 
         Task<TCoreModel> GetAsync(int id);

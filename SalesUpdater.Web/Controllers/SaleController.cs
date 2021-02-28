@@ -30,7 +30,7 @@ namespace SalesUpdater.Web.Data.Controllers
 
             _mapper = mapper;
 
-            _pageSize = int.Parse(ConfigurationManager.AppSettings["numberOfRecordsPerPage"]);
+            _pageSize = int.Parse(ConfigurationManager.AppSettings["itemsPerPage"]);
 
             _numberOfRecordsToCreateSchedule =
                 int.Parse(ConfigurationManager.AppSettings["numberOfRecordsToCreateSchedule"]);
@@ -41,9 +41,9 @@ namespace SalesUpdater.Web.Data.Controllers
         {
             try
             {
-                ViewBag.SaleFilter = new SaleFilterViewModel();
+                ViewBag.SaleFilter = new SaleViewFilterModel();
 
-                var salesCoreModels = await _saleService.GetUsingPagedListAsync(page ?? 1, _pageSize);
+                var salesCoreModels = await _saleService.GetPagedListAsync(page ?? 1, _pageSize);
 
                 var salesViewModels =
                         _mapper.Map<IPagedList<SaleViewModel>>(salesCoreModels);
@@ -64,7 +64,7 @@ namespace SalesUpdater.Web.Data.Controllers
             try
             {
                 var salesForGraphCoreModels =
-                    await _saleService.GetUsingPagedListAsync(page ?? 1, _numberOfRecordsToCreateSchedule, null,
+                    await _saleService.GetPagedListAsync(page ?? 1, _numberOfRecordsToCreateSchedule, null,
                         SortDirection.Descending);
 
                 var salesForGraphViewModels =
@@ -89,40 +89,34 @@ namespace SalesUpdater.Web.Data.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> Find(SaleFilterViewModel saleFilterViewModel)
+        public async Task<ActionResult> Find(SaleViewFilterModel saleViewFilterModel)
         {
             try
             {
-                #region Validation
                 if (!ModelState.IsValid)
                 {
-                    var coreModels = await _saleService.GetUsingPagedListAsync(saleFilterViewModel.Page ?? 1, _pageSize)
+                    var coreModels = await _saleService.GetPagedListAsync(saleViewFilterModel.Page ?? 1, _pageSize)
                         .ConfigureAwait(false);
 
                     var viewModels = _mapper.Map<IPagedList<SaleViewModel>>(coreModels);
 
                     return PartialView("Partial/_SaleTable", viewModels);
                 }
-                #endregion
 
-                # region Filter
 
                 var salesCoreModels = await _saleService.Filter(
-                    _mapper.Map<SaleFilterCoreModel>(saleFilterViewModel), _pageSize);
+                    _mapper.Map<SaleCoreFilterModel>(saleViewFilterModel), _pageSize);
 
                 var salesViewModels = _mapper.Map<IPagedList<SaleViewModel>>(salesCoreModels);
-                #endregion
 
-                #region Filling ViewBag
-                ViewBag.SaleFilterClientFirstNameValue = saleFilterViewModel.ClientName;
-                ViewBag.SaleFilterClientLastNameValue = saleFilterViewModel.ClientSurname;
-                ViewBag.SaleFilterDateFromValue = saleFilterViewModel.DateFrom;
-                ViewBag.SaleFilterDateToValue = saleFilterViewModel.DateTo;
-                ViewBag.SaleFilterManagerLastNameValue = saleFilterViewModel.ManagerSurname;
-                ViewBag.SaleFilterProductNameValue = saleFilterViewModel.ProductName;
-                ViewBag.SaleFilterSumFromValue = saleFilterViewModel.SumFrom;
-                ViewBag.SaleFilterSumToValue = saleFilterViewModel.SumTo;
-                #endregion
+                ViewBag.SaleFilterClientFirstNameValue = saleViewFilterModel.ClientName;
+                ViewBag.SaleFilterClientLastNameValue = saleViewFilterModel.ClientSurname;
+                ViewBag.SaleFilterDateFromValue = saleViewFilterModel.DateFrom;
+                ViewBag.SaleFilterDateToValue = saleViewFilterModel.DateTo;
+                ViewBag.SaleFilterManagerLastNameValue = saleViewFilterModel.ManagerSurname;
+                ViewBag.SaleFilterProductNameValue = saleViewFilterModel.ProductName;
+                ViewBag.SaleFilterSumFromValue = saleViewFilterModel.SumFrom;
+                ViewBag.SaleFilterSumToValue = saleViewFilterModel.SumTo;
 
                 return PartialView("Partial/_SaleTable", salesViewModels);
             }
@@ -147,12 +141,10 @@ namespace SalesUpdater.Web.Data.Controllers
         {
             try
             {
-                #region Validation
                 if (!ModelState.IsValid)
                 {
                     return View(sale);
                 }
-                #endregion
 
                 await _saleService.AddAsync(_mapper.Map<SaleDTO>(sale)).ConfigureAwait(false);
 
@@ -192,12 +184,10 @@ namespace SalesUpdater.Web.Data.Controllers
         {
             try
             {
-                #region Validation
                 if (!ModelState.IsValid)
                 {
                     return View(sale);
                 }
-                #endregion
 
                 await _saleService.UpdateAsync(_mapper.Map<SaleDTO>(sale)).ConfigureAwait(false);
 

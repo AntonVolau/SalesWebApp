@@ -3,7 +3,7 @@ using SalesUpdater.Web.Data.Models.Filters;
 
 namespace SalesUpdater.Web.Data.Contracts.Services
 {
-    public interface IProductService : IService<ProductDTO, ProductFilterCoreModel>
+    public interface IProductService : IService<ProductDTO, ProductCoreFilterModel>
     {
     }
 }

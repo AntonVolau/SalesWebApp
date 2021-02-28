@@ -30,7 +30,7 @@ namespace SalesUpdater.DAL.Repositories
 
         return Find(predicate).First().ID;
     }
-        public async Task<bool> TryAddUniqueManagerAsync(ManagerDTO managerDto)
+        public async Task<bool> TryAddManagerAsync(ManagerDTO managerDto)
         {
             if (await DoesManagerExistAsync(managerDto).ConfigureAwait(false))
             {

@@ -40,7 +40,7 @@
 
     </table>
 
-    @Html.PagedListPager(Model, page => Url.Action("Find", "Manager", new ManagerFilterViewModel { Page = page, Surname = ViewBag.ManagerFilterLastNameValue }),
+    @Html.PagedListPager(Model, page => Url.Action("Find", "Manager", new ManagerViewFilterModel { Page = page, Surname = ViewBag.ManagerFilterLastNameValue }),
         PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions { HttpMethod = "GET", UpdateTargetId = "updatedTableWithAjax" }))
 
 }

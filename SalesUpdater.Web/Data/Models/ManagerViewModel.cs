@@ -10,7 +10,7 @@ namespace SalesUpdater.Web.Data.Models
 
         [Required]
         [Display(Name = "Surname")]
-        [StringLength(50, ErrorMessage = "Surname length must be less than 50 characters")]
+        [StringLength(30, ErrorMessage = "Surname length must be less than 30 characters long")]
         public string Surname { get; set; }
     }
 }

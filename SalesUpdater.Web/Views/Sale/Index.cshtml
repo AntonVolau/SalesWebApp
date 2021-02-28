@@ -18,7 +18,7 @@
 
 </div>
 
-@Html.Partial("~/Views/Sale/Partial/_SaleFilter.cshtml", (SaleFilterViewModel)ViewBag.SaleFilter)
+@Html.Partial("~/Views/Sale/Partial/_SaleFilter.cshtml", (SaleViewFilterModel)ViewBag.SaleFilter)
 
 <div id="updatedTableWithAjax">
     @Html.Partial("~/Views/Sale/Partial/_SaleTable.cshtml", Model)

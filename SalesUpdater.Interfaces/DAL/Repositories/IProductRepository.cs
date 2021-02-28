@@ -9,7 +9,7 @@ namespace SalesUpdater.Interfaces.DAL.Repositories
 
         int GetId(string productName);
 
-        Task<bool> TryAddUniqueProductAsync(ProductDTO productCoreModel);
+        Task<bool> TryAddProductAsync(ProductDTO productCoreModel);
 
         Task<int> GetIdAsync(string productName);
 

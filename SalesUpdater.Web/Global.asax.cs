@@ -10,7 +10,7 @@ namespace SalesUpdater.Web
 
         protected void Application_Start()
         {
-            IocConfigurator.ConfigureIocUnityContainer();
+            DIConfigurator.ConfigureIocUnityContainer();
 
             AreaRegistration.RegisterAllAreas();
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);

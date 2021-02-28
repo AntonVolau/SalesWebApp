@@ -72,20 +72,28 @@ namespace SalesUpdater.DAL.Repositories
         {
             foreach (var model in entities)
             {
-                var entity = DTOtoEntity(model);
-                DbSet.Attach(entity);
-                _context.Entry(entity).State = EntityState.Modified;
+                var x = DbSet.Find(model.ID);
+
+                _mapper.Map(model, x);
+
+                //  var entity = DTOtoEntity(model);
+                //  DbSet.Attach(entity);
+                //  _context.Entry(entity).State = EntityState.Modified;
             }
         }
 
         public TDTO Update(TDTO model)
         {
-            var entity = DTOtoEntity(model);
+           // var entity = DTOtoEntity(model);
 
-            var result = DbSet.Attach(entity);
-            _context.Entry(entity).State = EntityState.Modified;
+            var x = DbSet.Find(model.ID);
 
-            return _mapper.Map<TDTO>(result);
+            var y = _mapper.Map(model, x);
+
+            // var result = DbSet.Attach(entity);
+            // _context.Entry(entity).State = EntityState.Modified;
+
+            return _mapper.Map<TDTO>(model);
         }
 
         public TDTO Get(int ID)
@@ -116,11 +124,26 @@ namespace SalesUpdater.DAL.Repositories
 
             if (_context.Entry(entity).State == EntityState.Detached)
             {
-                DbSet.Attach(entity);
+                try
+                {
+                    DbSet.Add(entity);
+                    var z = _context.Entry(entity).State;
+                }
+                catch (Exception x)
+                {
+                    throw;
+                }
             }
-
-            DbSet.Remove(entity);
-            _context.Entry(entity).State = EntityState.Deleted;
+            try
+            {
+                DbSet.Remove(entity);
+                var kek = _context.Entry(entity).State;
+                _context.Entry(entity).State = EntityState.Deleted;
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
         }
 
         public async Task<TDTO> GetAsync(int id)
@@ -134,7 +157,7 @@ namespace SalesUpdater.DAL.Repositories
             return _mapper.Map<TDTO>(result);
         }
 
-        public async Task<IPagedList<TDTO>> GetUsingPagedListAsync(int pageNumber, int pageSize,
+        public async Task<IPagedList<TDTO>> GetPagedListAsync(int pageNumber, int pageSize,
             Expression<Func<TDTO, bool>> predicate = null, SortDirection sortDirection = SortDirection.Ascending)
         {
             IPagedList<TEntity> result;

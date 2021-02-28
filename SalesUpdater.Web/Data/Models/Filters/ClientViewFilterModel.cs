@@ -1,6 +1,6 @@
 ﻿namespace SalesUpdater.Web.Data.Models.Filters
 {
-    public class ClientFilterViewModel : PagedListParameterViewModel
+    public class ClientViewFilterModel : PagedListParameterViewModel
     {
         public string Name { get; set; } = null;
 

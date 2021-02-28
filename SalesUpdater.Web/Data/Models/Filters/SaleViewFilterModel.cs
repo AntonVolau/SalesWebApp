@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace SalesUpdater.Web.Data.Models.Filters
 {
-    public class SaleFilterViewModel : PagedListParameterViewModel
+    public class SaleViewFilterModel : PagedListParameterViewModel
     {
         [DataType(DataType.Date)]
         public DateTime? DateFrom { get; set; } = null;

@@ -9,10 +9,10 @@ namespace SalesUpdater.Interfaces.DAL.Repositories
 
         int GetId(string name, string surname);
 
-        Task<bool> TryAddUniqueClientAsync(ClientDTO customerCoreModel);
+        Task<bool> TryAddClientAsync(ClientDTO customerCoreModel);
 
-        Task<int> GetIdAsync(string customerFirstName, string customerLastName);
+        Task<int> GetIdAsync(string clientName, string clientSurname);
 
-        Task<bool> DoesClientExistAsync(ClientDTO customerCoreModel);
+        Task<bool> DoesClientExistAsync(ClientDTO clientCoreModel);
     }
 }

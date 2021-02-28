@@ -17,50 +17,46 @@ namespace SalesUpdater.Web.Data.Contracts.Services.Implementation
     {
         private SalesContext Context { get; }
 
-        private ReaderWriterLockSlim Locker { get; }
-
         private ISaleDbReaderWriter SaleDbReaderWriter { get; }
 
         public SaleService()
         {
             Context = new SalesContext();
 
-            Locker = new ReaderWriterLockSlim();
-
-            SaleDbReaderWriter = new SaleDbReaderWriter(Context, Locker);
+            SaleDbReaderWriter = new SaleDbReaderWriter(Context);
         }
 
-        public async Task<IPagedList<SaleDTO>> GetUsingPagedListAsync(int pageNumber, int pageSize,
+        public async Task<IPagedList<SaleDTO>> GetPagedListAsync(int pageNumber, int pageSize,
             Expression<Func<SaleDTO, bool>> predicate = null, SortDirection sortDirection = SortDirection.Ascending)
         {
-            return await SaleDbReaderWriter.GetUsingPagedListAsync(pageNumber, pageSize, predicate)
+            return await SaleDbReaderWriter.GetPagedListAsync(pageNumber, pageSize, predicate)
                 .ConfigureAwait(false);
         }
 
-        public async Task<IPagedList<SaleDTO>> Filter(SaleFilterCoreModel saleFilterCoreModel,
+        public async Task<IPagedList<SaleDTO>> Filter(SaleCoreFilterModel saleCoreFilterModel,
             int pageSize, SortDirection sortDirection = SortDirection.Ascending)
         {
-            if (saleFilterCoreModel.ClientName == null &&
-                saleFilterCoreModel.ClientSurname == null &&
-                saleFilterCoreModel.DateFrom == null &&
-                saleFilterCoreModel.DateTo == null &&
-                saleFilterCoreModel.ManagerSurname == null &&
-                saleFilterCoreModel.ProductName == null &&
-                saleFilterCoreModel.SumFrom == null &&
-                saleFilterCoreModel.SumTo == null)
+            if (saleCoreFilterModel.ClientName == null &&
+                saleCoreFilterModel.ClientSurname == null &&
+                saleCoreFilterModel.DateFrom == null &&
+                saleCoreFilterModel.DateTo == null &&
+                saleCoreFilterModel.ManagerSurname == null &&
+                saleCoreFilterModel.ProductName == null &&
+                saleCoreFilterModel.SumFrom == null &&
+                saleCoreFilterModel.SumTo == null)
             {
-                return await GetUsingPagedListAsync(saleFilterCoreModel.Page ?? 1, pageSize)
+                return await GetPagedListAsync(saleCoreFilterModel.Page ?? 1, pageSize)
                     .ConfigureAwait(false);
             }
 
-            return await GetUsingPagedListAsync(
-                saleFilterCoreModel.Page ?? 1, pageSize, x =>
-                    (x.Date >= saleFilterCoreModel.DateFrom && x.Date <= saleFilterCoreModel.DateTo) &&
-                    (x.Sum >= saleFilterCoreModel.SumFrom && x.Sum <= saleFilterCoreModel.SumTo) &&
-                    x.Clients.Name.Contains(saleFilterCoreModel.ClientName) &&
-                    x.Clients.Surname.Contains(saleFilterCoreModel.ClientSurname) &&
-                    x.Managers.Surname.Contains(saleFilterCoreModel.ManagerSurname) &&
-                    x.Products.Name.Contains(saleFilterCoreModel.ProductName)).ConfigureAwait(false);
+            return await GetPagedListAsync(
+                saleCoreFilterModel.Page ?? 1, pageSize, x =>
+                    (x.Date >= saleCoreFilterModel.DateFrom && x.Date <= saleCoreFilterModel.DateTo) &&
+                    (x.Sum >= saleCoreFilterModel.SumFrom && x.Sum <= saleCoreFilterModel.SumTo) &&
+                    x.Clients.Name.Contains(saleCoreFilterModel.ClientName) &&
+                    x.Clients.Surname.Contains(saleCoreFilterModel.ClientSurname) &&
+                    x.Managers.Surname.Contains(saleCoreFilterModel.ManagerSurname) &&
+                    x.Products.Name.Contains(saleCoreFilterModel.ProductName)).ConfigureAwait(false);
 
         }
 
@@ -97,7 +93,6 @@ namespace SalesUpdater.Web.Data.Contracts.Services.Implementation
             {
                 if (disposing)
                 {
-                    Locker.Dispose();
                     Context.Dispose();
                 }
             }

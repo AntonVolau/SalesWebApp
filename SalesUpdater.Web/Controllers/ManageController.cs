@@ -54,12 +54,12 @@ namespace SalesUpdater.Web.Data.Controllers
         public async Task<ActionResult> Index(ManageMessageId? message)
         {
             ViewBag.StatusMessage =
-                message == ManageMessageId.ChangePasswordSuccess ? "Your password has been changed."
-                : message == ManageMessageId.SetPasswordSuccess ? "Your password has been set."
-                : message == ManageMessageId.SetTwoFactorSuccess ? "Your two-factor authentication provider has been set."
-                : message == ManageMessageId.Error ? "An error has occurred."
-                : message == ManageMessageId.AddPhoneSuccess ? "Your phone number was added."
-                : message == ManageMessageId.RemovePhoneSuccess ? "Your phone number was removed."
+                message == ManageMessageId.ChangePasswordSuccess ? "You changed your password"
+                : message == ManageMessageId.SetPasswordSuccess ? "You set your password"
+                : message == ManageMessageId.SetTwoFactorSuccess ? "You set two-factor authentication"
+                : message == ManageMessageId.Error ? "An error has occurred"
+                : message == ManageMessageId.AddPhoneSuccess ? "You added phone number"
+                : message == ManageMessageId.RemovePhoneSuccess ? "You removed phone number"
                 : "";
 
             var userId = User.Identity.GetUserId();
@@ -122,7 +122,7 @@ namespace SalesUpdater.Web.Data.Controllers
                 var message = new IdentityMessage
                 {
                     Destination = model.Number,
-                    Body = "Your security code is: " + code
+                    Body = "Your security code: " + code
                 };
                 await UserManager.SmsService.SendAsync(message);
             }
@@ -332,7 +332,6 @@ namespace SalesUpdater.Web.Data.Controllers
             base.Dispose(disposing);
         }
 
-        #region Helpers
         // Used for XSRF protection when adding external logins
         private const string XsrfKey = "XsrfId";
 
@@ -383,6 +382,5 @@ namespace SalesUpdater.Web.Data.Controllers
             Error
         }
 
-        #endregion
     }
 }

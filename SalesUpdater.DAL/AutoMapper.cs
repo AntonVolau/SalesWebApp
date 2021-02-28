@@ -36,31 +36,31 @@ namespace SalesUpdater.DAL
 
                     config
                            .CreateMap<IPagedList<Clients>, IPagedList<ClientDTO>>()
-                           .ConvertUsing<PagedListConverter<Clients, ClientDTO>>();
+                           .ConvertUsing<CustomConverter<Clients, ClientDTO>>();
                     config
                         .CreateMap<IPagedList<ClientDTO>, IPagedList<Clients>>()
-                        .ConvertUsing<PagedListConverter<ClientDTO, Clients>>();
+                        .ConvertUsing<CustomConverter<ClientDTO, Clients>>();
 
                     config
                         .CreateMap<IPagedList<Products>, IPagedList<ProductDTO>>()
-                        .ConvertUsing<PagedListConverter<Products, ProductDTO>>();
+                        .ConvertUsing<CustomConverter<Products, ProductDTO>>();
                     config
                         .CreateMap<IPagedList<ProductDTO>, IPagedList<Products>>()
-                        .ConvertUsing<PagedListConverter<ProductDTO, Products>>();
+                        .ConvertUsing<CustomConverter<ProductDTO, Products>>();
 
                     config
                         .CreateMap<IPagedList<Managers>, IPagedList<ManagerDTO>>()
-                        .ConvertUsing<PagedListConverter<Managers, ManagerDTO>>();
+                        .ConvertUsing<CustomConverter<Managers, ManagerDTO>>();
                     config
                         .CreateMap<IPagedList<ManagerDTO>, IPagedList<Managers>>()
-                        .ConvertUsing<PagedListConverter<ManagerDTO, Managers>>();
+                        .ConvertUsing<CustomConverter<ManagerDTO, Managers>>();
 
                     config
                         .CreateMap<IPagedList<Sales>, IPagedList<SaleDTO>>()
-                        .ConvertUsing<PagedListConverter<Sales, SaleDTO>>();
+                        .ConvertUsing<CustomConverter<Sales, SaleDTO>>();
                     config
                         .CreateMap<IPagedList<SaleDTO>, IPagedList<Sales>>()
-                        .ConvertUsing<PagedListConverter<SaleDTO, Sales>>();
+                        .ConvertUsing<CustomConverter<SaleDTO, Sales>>();
 
 
                 });
@@ -71,7 +71,7 @@ namespace SalesUpdater.DAL
             }
         }
 
-        public class PagedListConverter<TSource, TDestination>
+        public class CustomConverter<TSource, TDestination>
        : ITypeConverter<IPagedList<TSource>, IPagedList<TDestination>>
        where TSource : class
        where TDestination : class

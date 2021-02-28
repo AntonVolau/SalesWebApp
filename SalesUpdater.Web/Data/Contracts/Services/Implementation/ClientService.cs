@@ -17,40 +17,36 @@ namespace SalesUpdater.Web.Data.Contracts.Services.Implementation
     {
         private SalesContext Context { get; }
 
-        private ReaderWriterLockSlim Locker { get; }
-
         private IClientDbReaderWriter ClientDbReaderWriter { get; }
 
         public ClientService()
         {
             Context = new SalesContext();
 
-            Locker = new ReaderWriterLockSlim();
-
-            ClientDbReaderWriter = new ClientDbReaderWriter(Context, Locker);
+            ClientDbReaderWriter = new ClientDbReaderWriter(Context);
         }
 
-        public async Task<IPagedList<ClientDTO>> GetUsingPagedListAsync(int pageNumber, int pageSize,
+        public async Task<IPagedList<ClientDTO>> GetPagedListAsync(int pageNumber, int pageSize,
             Expression<Func<ClientDTO, bool>> predicate = null,
             SortDirection sortDirection = SortDirection.Ascending)
         {
-            return await ClientDbReaderWriter.GetUsingPagedListAsync(pageNumber, pageSize, predicate)
+            return await ClientDbReaderWriter.GetPagedListAsync(pageNumber, pageSize, predicate)
                 .ConfigureAwait(false);
         }
 
-        public async Task<IPagedList<ClientDTO>> Filter(ClientFilterCoreModel clientFilterCoreModel,
+        public async Task<IPagedList<ClientDTO>> Filter(ClientCoreFilterModel clientCoreFilterModel,
             int pageSize, SortDirection sortDirection = SortDirection.Ascending)
         {
-            if (clientFilterCoreModel.Name == null && clientFilterCoreModel.Surname == null)
+            if (clientCoreFilterModel.Name == null && clientCoreFilterModel.Surname == null)
             {
-                return await GetUsingPagedListAsync(clientFilterCoreModel.Page ?? 1, pageSize)
+                return await GetPagedListAsync(clientCoreFilterModel.Page ?? 1, pageSize)
                     .ConfigureAwait(false);
             }
 
-            return await GetUsingPagedListAsync(
-                    clientFilterCoreModel.Page ?? 1, pageSize,
-                    x => x.Name.Contains(clientFilterCoreModel.Name) ||
-                         x.Surname.Contains(clientFilterCoreModel.Surname))
+            return await GetPagedListAsync(
+                    clientCoreFilterModel.Page ?? 1, pageSize,
+                    x => x.Name.Contains(clientCoreFilterModel.Name) ||
+                         x.Surname.Contains(clientCoreFilterModel.Surname))
                 .ConfigureAwait(false);
         }
 
@@ -87,7 +83,6 @@ namespace SalesUpdater.Web.Data.Contracts.Services.Implementation
             {
                 if (disposing)
                 {
-                    Locker.Dispose();
                     Context.Dispose();
                 }
             }

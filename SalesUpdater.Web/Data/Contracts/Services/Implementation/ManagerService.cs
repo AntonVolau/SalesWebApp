@@ -17,7 +17,7 @@ namespace SalesUpdater.Web.Data.Contracts.Services.Implementation
     {
         private SalesContext Context { get; }
 
-        private ReaderWriterLockSlim Locker { get; }
+        // private ReaderWriterLockSlim Locker { get; }
 
         private IManagerDbReaderWriter ManagerDbReaderWriter { get; }
 
@@ -25,29 +25,29 @@ namespace SalesUpdater.Web.Data.Contracts.Services.Implementation
         {
             Context = new SalesContext();
 
-            Locker = new ReaderWriterLockSlim();
+            // Locker = new ReaderWriterLockSlim();
 
-            ManagerDbReaderWriter = new ManagerDbReaderWriter(Context, Locker);
+            ManagerDbReaderWriter = new ManagerDbReaderWriter(Context);
         }
 
-        public async Task<IPagedList<ManagerDTO>> GetUsingPagedListAsync(int pageNumber, int pageSize,
+        public async Task<IPagedList<ManagerDTO>> GetPagedListAsync(int pageNumber, int pageSize,
             Expression<Func<ManagerDTO, bool>> predicate = null, SortDirection sortDirection = SortDirection.Ascending)
         {
-            return await ManagerDbReaderWriter.GetUsingPagedListAsync(pageNumber, pageSize, predicate)
+            return await ManagerDbReaderWriter.GetPagedListAsync(pageNumber, pageSize, predicate)
                 .ConfigureAwait(false);
         }
 
-        public async Task<IPagedList<ManagerDTO>> Filter(ManagerFilterCoreModel managerFilterCoreModel,
+        public async Task<IPagedList<ManagerDTO>> Filter(ManagerCoreFilterModel managerCoreFilterModel,
             int pageSize, SortDirection sortDirection = SortDirection.Ascending)
         {
-            if (managerFilterCoreModel.Surname == null)
+            if (managerCoreFilterModel.Surname == null)
             {
-                return await GetUsingPagedListAsync(managerFilterCoreModel.Page ?? 1, pageSize)
+                return await GetPagedListAsync(managerCoreFilterModel.Page ?? 1, pageSize)
                     .ConfigureAwait(false);
             }
 
-            return await GetUsingPagedListAsync(managerFilterCoreModel.Page ?? 1, pageSize,
-                    x => x.Surname.Contains(managerFilterCoreModel.Surname))
+            return await GetPagedListAsync(managerCoreFilterModel.Page ?? 1, pageSize,
+                    x => x.Surname.Contains(managerCoreFilterModel.Surname))
                 .ConfigureAwait(false);
         }
 
@@ -68,7 +68,7 @@ namespace SalesUpdater.Web.Data.Contracts.Services.Implementation
 
         public async Task DeleteAsync(int id)
         {
-            await ManagerDbReaderWriter.DeleteAsync(id).ConfigureAwait(false);
+            await ManagerDbReaderWriter.DeleteAsync(id).ConfigureAwait(true);
         }
 
         public async Task<IEnumerable<ManagerDTO>> FindAsync(Expression<Func<ManagerDTO, bool>> predicate)
@@ -84,7 +84,7 @@ namespace SalesUpdater.Web.Data.Contracts.Services.Implementation
             {
                 if (disposing)
                 {
-                    Locker.Dispose();
+                    // Locker.Dispose();
                     Context.Dispose();
                 }
             }

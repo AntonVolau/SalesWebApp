@@ -26,7 +26,7 @@ namespace SalesUpdater.Web.Controllers
 
             _mapper = mapper;
 
-            _pageSize = int.Parse(ConfigurationManager.AppSettings["numberOfRecordsPerPage"]);
+            _pageSize = int.Parse(ConfigurationManager.AppSettings["itemsPerPage"]);
         }
 
         [HttpGet]
@@ -34,9 +34,9 @@ namespace SalesUpdater.Web.Controllers
         {
             try
             {
-                ViewBag.ManagerFilter = new ManagerFilterViewModel();
+                ViewBag.ManagerFilter = new ManagerViewFilterModel();
 
-                var managersCoreModels = await _managerService.GetUsingPagedListAsync(page ?? 1, _pageSize);
+                var managersCoreModels = await _managerService.GetPagedListAsync(page ?? 1, _pageSize);
 
                 var managersViewModels =
                         _mapper.Map<IPagedList<ManagerViewModel>>(managersCoreModels);
@@ -52,7 +52,7 @@ namespace SalesUpdater.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> Find(ManagerFilterViewModel managerFilterViewModel)
+        public async Task<ActionResult> Find(ManagerViewFilterModel managerViewFilterModel)
         {
             try
             {
@@ -60,7 +60,7 @@ namespace SalesUpdater.Web.Controllers
                 if (!ModelState.IsValid)
                 {
                     var coreModels = await _managerService
-                        .GetUsingPagedListAsync(managerFilterViewModel.Page ?? 1, _pageSize)
+                        .GetPagedListAsync(managerViewFilterModel.Page ?? 1, _pageSize)
                         .ConfigureAwait(false);
 
                     var viewModels = _mapper.Map<IPagedList<ManagerViewModel>>(coreModels);
@@ -71,13 +71,13 @@ namespace SalesUpdater.Web.Controllers
 
                 #region Filter
                 var managersCoreModels = await _managerService.Filter(
-                    _mapper.Map<ManagerFilterCoreModel>(managerFilterViewModel), _pageSize);
+                    _mapper.Map<ManagerCoreFilterModel>(managerViewFilterModel), _pageSize);
 
                 var managersViewModels = _mapper.Map<IPagedList<ManagerViewModel>>(managersCoreModels);
                 #endregion
 
                 #region Filling ViewBag
-                ViewBag.ManagerFilterLastNameValue = managerFilterViewModel.Surname;
+                ViewBag.ManagerFilterLastNameValue = managerViewFilterModel.Surname;
                 #endregion
 
                 return PartialView("Partial/_ManagerTable", managersViewModels);
@@ -91,12 +91,14 @@ namespace SalesUpdater.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public ActionResult Create()
         {
             return View();
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Create(ManagerViewModel managerViewModel)
         {
             try
@@ -121,6 +123,7 @@ namespace SalesUpdater.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Edit(int id)
         {
             try
@@ -140,6 +143,7 @@ namespace SalesUpdater.Web.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Edit(ManagerViewModel manager)
         {
             try
@@ -164,6 +168,7 @@ namespace SalesUpdater.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Delete(int id)
         {
             try

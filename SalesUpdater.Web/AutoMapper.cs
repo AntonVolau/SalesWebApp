@@ -32,22 +32,22 @@ namespace SalesUpdater.Web
                     config.CreateMap<SaleViewModel, SaleDTO>().ReverseMap();
                     try
                     {
-                        config.CreateMap<ClientFilterCoreModel, ClientFilterViewModel>().ReverseMap();
+                        config.CreateMap<ClientCoreFilterModel, ClientViewFilterModel>().ReverseMap();
                     }
                     catch (Exception z)
                     {
                         throw;
                     }
-                    config.CreateMap<ProductFilterCoreModel, ProductFilterViewModel>().ReverseMap();
+                    config.CreateMap<ProductCoreFilterModel, ProductViewFilterModel>().ReverseMap();
 
-                    config.CreateMap<ManagerFilterViewModel, ManagerFilterCoreModel>().ReverseMap();
+                    config.CreateMap<ManagerViewFilterModel, ManagerCoreFilterModel>().ReverseMap();
 
-                    config.CreateMap<SaleFilterViewModel, SaleFilterCoreModel>().ReverseMap();
+                    config.CreateMap<SaleViewFilterModel, SaleCoreFilterModel>().ReverseMap();
                     try
                     {
                         config
                             .CreateMap<IPagedList<ClientViewModel>, IPagedList<ClientDTO>>()
-                            .ConvertUsing<PagedListConverter<ClientViewModel, ClientDTO>>();
+                            .ConvertUsing<CustomConverter<ClientViewModel, ClientDTO>>();
                     }
                     catch (Exception i)
                     {
@@ -55,28 +55,28 @@ namespace SalesUpdater.Web
                     }
                     config
                         .CreateMap<IPagedList<ClientDTO>, IPagedList<ClientViewModel>>()
-                        .ConvertUsing<PagedListConverter<ClientDTO, ClientViewModel>>();
+                        .ConvertUsing<CustomConverter<ClientDTO, ClientViewModel>>();
 
                     config
                         .CreateMap<IPagedList<ProductViewModel>, IPagedList<ProductDTO>>()
-                        .ConvertUsing<PagedListConverter<ProductViewModel, ProductDTO>>();
+                        .ConvertUsing<CustomConverter<ProductViewModel, ProductDTO>>();
                     config
                         .CreateMap<IPagedList<ProductDTO>, IPagedList<ProductViewModel>>()
-                        .ConvertUsing<PagedListConverter<ProductDTO, ProductViewModel>>();
+                        .ConvertUsing<CustomConverter<ProductDTO, ProductViewModel>>();
 
                     config
                         .CreateMap<IPagedList<ManagerViewModel>, IPagedList<ManagerDTO>>()
-                        .ConvertUsing<PagedListConverter<ManagerViewModel, ManagerDTO>>();
+                        .ConvertUsing<CustomConverter<ManagerViewModel, ManagerDTO>>();
                     config
                         .CreateMap<IPagedList<ManagerDTO>, IPagedList<ManagerViewModel>>()
-                        .ConvertUsing<PagedListConverter<ManagerDTO, ManagerViewModel>>();
+                        .ConvertUsing<CustomConverter<ManagerDTO, ManagerViewModel>>();
 
                     config
                         .CreateMap<IPagedList<SaleViewModel>, IPagedList<SaleDTO>>()
-                        .ConvertUsing<PagedListConverter<SaleViewModel, SaleDTO>>();
+                        .ConvertUsing<CustomConverter<SaleViewModel, SaleDTO>>();
                     config
                         .CreateMap<IPagedList<SaleDTO>, IPagedList<SaleViewModel>>()
-                        .ConvertUsing<PagedListConverter<SaleDTO, SaleViewModel>>();
+                        .ConvertUsing<CustomConverter<SaleDTO, SaleViewModel>>();
                 });
             }
             catch (Exception e)
@@ -86,7 +86,7 @@ namespace SalesUpdater.Web
         }
     }
 
-    public class PagedListConverter<TSource, TDestination>
+    public class CustomConverter<TSource, TDestination>
         : ITypeConverter<IPagedList<TSource>, IPagedList<TDestination>>
         where TSource : class
         where TDestination : class

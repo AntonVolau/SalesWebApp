@@ -15,13 +15,13 @@ namespace SalesUpdater.DAL
 
             var newBody = new TransformVisitor(sourceParameter, targetParameter).Visit(sourceExpression.Body);
 
-            var paramsList = sourceExpression.Parameters.ToList();
+            var parametersList = sourceExpression.Parameters.ToList();
 
-            var position = paramsList.IndexOf(sourceParameter);
+            var position = parametersList.IndexOf(sourceParameter);
 
-            paramsList[position] = targetParameter;
+            parametersList[position] = targetParameter;
 
-            return Expression.Lambda<Func<TTargetType, bool>>(newBody, paramsList);
+            return Expression.Lambda<Func<TTargetType, bool>>(newBody, parametersList);
         }
 
         private class TransformVisitor : ExpressionVisitor

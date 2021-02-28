@@ -8,7 +8,7 @@ using Unity.Lifetime;
 
 namespace SalesUpdater.Web
 {
-    public static class IocConfigurator
+    public static class DIConfigurator
     {
         public static void ConfigureIocUnityContainer()
         {

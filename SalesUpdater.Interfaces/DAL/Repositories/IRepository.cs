@@ -32,7 +32,7 @@ namespace SalesUpdater.Interfaces.DAL.Repositories
 
         Task<TDTO> GetAsync(int id);
 
-        Task<IPagedList<TDTO>> GetUsingPagedListAsync(int pageNumber, int pageSize,
+        Task<IPagedList<TDTO>> GetPagedListAsync(int pageNumber, int pageSize,
             Expression<Func<TDTO, bool>> predicate = null, SortDirection sortDirection = SortDirection.Ascending);
 
         Task<IEnumerable<TDTO>> FindAsync(Expression<Func<TDTO, bool>> predicate);

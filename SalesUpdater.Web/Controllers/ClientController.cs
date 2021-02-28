@@ -26,7 +26,7 @@ namespace SalesUpdater.Web.Data.Controllers
 
             _mapper = mapper;
 
-            _pageSize = int.Parse(ConfigurationManager.AppSettings["numberOfRecordsPerPage"]);
+            _pageSize = int.Parse(ConfigurationManager.AppSettings["itemsPerPage"]);
         }
 
         [HttpGet]
@@ -34,9 +34,9 @@ namespace SalesUpdater.Web.Data.Controllers
         {
             try
             {
-                ViewBag.ClientFilter = new ClientFilterViewModel();
+                ViewBag.ClientFilter = new ClientViewFilterModel();
 
-                var clientsCoreModels = await _clientService.GetUsingPagedListAsync(page ?? 1, _pageSize);
+                var clientsCoreModels = await _clientService.GetPagedListAsync(page ?? 1, _pageSize);
 
                 var clientsViewModels =
                         _mapper.Map<IPagedList<ClientViewModel>>(clientsCoreModels);
@@ -52,34 +52,28 @@ namespace SalesUpdater.Web.Data.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> Find(ClientFilterViewModel clientFilterViewModel)
+        public async Task<ActionResult> Find(ClientViewFilterModel clientViewFilterModel)
         {
             try
             {
-                #region Validation
                 if (!ModelState.IsValid)
                 {
                     var coreModels = await _clientService
-                        .GetUsingPagedListAsync(clientFilterViewModel.Page ?? 1, _pageSize)
+                        .GetPagedListAsync(clientViewFilterModel.Page ?? 1, _pageSize)
                         .ConfigureAwait(false);
 
                     var viewModels = _mapper.Map<IPagedList<ClientViewModel>>(coreModels);
 
                     return PartialView("Partial/_ClientTable", viewModels);
                 }
-                #endregion
 
-                #region Filter
                 var clientsCoreModels = await _clientService.Filter(
-                    _mapper.Map<ClientFilterCoreModel>(clientFilterViewModel), _pageSize);
+                    _mapper.Map<ClientCoreFilterModel>(clientViewFilterModel), _pageSize);
 
                 var clientsViewModels = _mapper.Map<IPagedList<ClientViewModel>>(clientsCoreModels);
-                #endregion
 
-                #region Filling ViewBag
-                ViewBag.ClientFilterFirstNameValue = clientFilterViewModel.Name;
-                ViewBag.ClientFilterLastNameValue = clientFilterViewModel.Surname;
-                #endregion
+                ViewBag.ClientFilterFirstNameValue = clientViewFilterModel.Name;
+                ViewBag.ClientFilterLastNameValue = clientViewFilterModel.Surname;
 
                 return PartialView("Partial/_ClientTable", clientsViewModels);
             }
@@ -104,12 +98,10 @@ namespace SalesUpdater.Web.Data.Controllers
         {
             try
             {
-                #region Validation
                 if (!ModelState.IsValid)
                 {
                     return View(clientViewModel);
                 }
-                #endregion
 
                 await _clientService.AddAsync(_mapper.Map<ClientDTO>(clientViewModel))
                     .ConfigureAwait(false);
@@ -150,12 +142,10 @@ namespace SalesUpdater.Web.Data.Controllers
         {
             try
             {
-                #region Validation
                 if (!ModelState.IsValid)
                 {
                     return View(clientViewModel);
                 }
-                #endregion
 
                 await _clientService.UpdateAsync(_mapper.Map<ClientDTO>(clientViewModel))
                     .ConfigureAwait(false);

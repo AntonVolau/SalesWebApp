@@ -24,6 +24,7 @@ namespace SalesUpdater.DAL
             }
             catch (Exception e)
             {
+                Logger.Log(e.Message);
                 throw;
             }
         }

@@ -35,7 +35,7 @@
                         @Html.ActionLink("Delete", "Delete", new { id = item.ID }, new
                         {
                             @class = "btn btn-primary",
-                            onclick = "return confirm('Are you sure you wish to delete this Client?');"
+                            onclick = "return confirm('Delete this client?');"
                         })
                     </div>
                 </td>
@@ -45,7 +45,7 @@
 
     </table>
 
-    @Html.PagedListPager(Model, page => Url.Action("Find", "Client", new ClientFilterViewModel
+    @Html.PagedListPager(Model, page => Url.Action("Find", "Client", new ClientViewFilterModel
 {
     Page = page,
     Name = ViewBag.ClientFilterFirstNameValue,

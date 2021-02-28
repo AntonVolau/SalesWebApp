@@ -16,25 +16,25 @@ namespace SalesUpdater.DAL.ReaderWriter.Implementation
     {
         private SalesContext Context { get; }
 
-        private ReaderWriterLockSlim Locker { get; }
+        // private ReaderWriterLockSlim Locker { get; }
 
         private IManagerRepository Managers { get; }
 
-        public ManagerDbReaderWriter(SalesContext context, ReaderWriterLockSlim locker)
+        public ManagerDbReaderWriter(SalesContext context)
         {
             Context = context;
 
-            Locker = locker;
+            // Locker = locker;
 
             var mapper = AutoMapper.CreateConfiguration().CreateMapper();
 
             Managers = new ManagerRepository(Context, mapper);
         }
 
-        public async Task<IPagedList<ManagerDTO>> GetUsingPagedListAsync(int number, int size,
+        public async Task<IPagedList<ManagerDTO>> GetPagedListAsync(int number, int size,
             Expression<Func<ManagerDTO, bool>> predicate = null, SortDirection sortDirection = SortDirection.Ascending)
         {
-            return await Managers.GetUsingPagedListAsync(number, size, predicate).ConfigureAwait(false);
+            return await Managers.GetPagedListAsync(number, size, predicate).ConfigureAwait(false);
         }
 
         public async Task<ManagerDTO> GetAsync(int id)
@@ -44,10 +44,10 @@ namespace SalesUpdater.DAL.ReaderWriter.Implementation
 
         public async Task<ManagerDTO> AddAsync(ManagerDTO manager)
         {
-            Locker.EnterWriteLock();
-            try
-            {
-                if (await Managers.TryAddUniqueManagerAsync(manager).ConfigureAwait(false))
+            // Locker.EnterWriteLock();
+          //  try
+          //  {
+                if (await Managers.TryAddManagerAsync(manager).ConfigureAwait(false))
                 {
                     await Managers.SaveAsync().ConfigureAwait(false);
                     return await GetAsync(await Managers.GetIdAsync(manager.Surname)
@@ -57,53 +57,55 @@ namespace SalesUpdater.DAL.ReaderWriter.Implementation
                 {
                     throw new ArgumentException("Manager already exists!");
                 }
-            }
-            finally
-            {
-                if (Locker.IsWriteLockHeld)
-                {
-                    Locker.ExitWriteLock();
-                }
-            }
+           // }
+           // finally
+           // {
+           //     if (Locker.IsWriteLockHeld)
+           //     {
+           //         Locker.ExitWriteLock();
+           //     }
+           // }
         }
 
         public async Task<ManagerDTO> UpdateAsync(ManagerDTO manager)
         {
-            Locker.EnterWriteLock();
-            try
-            {
+            // Locker.EnterWriteLock();
+          // try
+          // {
                 if (await Managers.DoesManagerExistAsync(manager).ConfigureAwait(false))
-                    throw new ArgumentException("Manager already exists!");
+                {
+                    throw new ArgumentException("Manager already exist!");
+                }
 
                 var result = Managers.Update(manager);
                 await Managers.SaveAsync().ConfigureAwait(false);
 
                 return result;
-            }
-            finally
-            {
-                if (Locker.IsWriteLockHeld)
-                {
-                    Locker.ExitWriteLock();
-                }
-            }
+           // }
+           // finally
+           // {
+           //     if (Locker.IsWriteLockHeld)
+           //     {
+           //         Locker.ExitWriteLock();
+           //     }
+           // }
         }
 
         public async Task DeleteAsync(int id)
         {
-            Locker.EnterReadLock();
-            try
-            {
+          //  Locker.EnterWriteLock();
+          //  try
+          //  {
                 await Managers.DeleteAsync(id).ConfigureAwait(false);
                 await Managers.SaveAsync().ConfigureAwait(false);
-            }
-            finally
-            {
-                if (Locker.IsReadLockHeld)
-                {
-                    Locker.ExitReadLock();
-                }
-            }
+          //  }
+          //  finally
+          //  {
+          //      if (Locker.IsReadLockHeld)
+          //      {
+          //          Locker.ExitWriteLock();
+          //      }
+          //  }
         }
 
         public async Task<IEnumerable<ManagerDTO>> FindAsync(Expression<Func<ManagerDTO, bool>> predicate)

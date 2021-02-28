@@ -26,38 +26,38 @@ namespace SalesUpdater.DAL.Repositories
             }
         }
 
-        public int GetId(string ClientFirstName, string ClientLastName)
+        public int GetId(string clientName, string clientSurname)
         {
             Expression<Func<ClientDTO, bool>> predicate = x =>
-                x.Name == ClientFirstName && x.Surname == ClientLastName;
+                x.Name == clientName && x.Surname == clientSurname;
 
             return Find(predicate).First().ID;
         }
-        public async Task<bool> TryAddUniqueClientAsync(ClientDTO customerCoreModel)
+        public async Task<bool> TryAddClientAsync(ClientDTO clientCoreModel)
         {
-            if (await DoesClientExistAsync(customerCoreModel).ConfigureAwait(false))
+            if (await DoesClientExistAsync(clientCoreModel).ConfigureAwait(false))
             {
                 return false;
             }
 
-            Add(customerCoreModel);
+            Add(clientCoreModel);
             return true;
         }
 
-        public async Task<int> GetIdAsync(string customerFirstName, string customerLastName)
+        public async Task<int> GetIdAsync(string clientName, string clientSurname)
         {
             Expression<Func<ClientDTO, bool>> predicate = x =>
-                x.Name == customerFirstName && x.Surname == customerLastName;
+                x.Name == clientName && x.Surname == clientSurname;
 
             var result = await FindAsync(predicate).ConfigureAwait(false);
 
             return result.First().ID;
         }
 
-        public async Task<bool> DoesClientExistAsync(ClientDTO customerCoreModel)
+        public async Task<bool> DoesClientExistAsync(ClientDTO clientCoreModel)
         {
             Expression<Func<ClientDTO, bool>> predicate = x =>
-                x.Surname == customerCoreModel.Surname && x.Name == customerCoreModel.Name;
+                x.Surname == clientCoreModel.Surname && x.Name == clientCoreModel.Name;
 
             var result = await FindAsync(predicate).ConfigureAwait(false);
 

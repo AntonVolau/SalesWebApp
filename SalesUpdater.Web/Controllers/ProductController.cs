@@ -26,7 +26,7 @@ namespace SalesUpdater.Web.Data.Controllers
 
             _mapper = mapper;
 
-            _pageSize = int.Parse(ConfigurationManager.AppSettings["numberOfRecordsPerPage"]);
+            _pageSize = int.Parse(ConfigurationManager.AppSettings["itemsPerPage"]);
         }
 
         [HttpGet]
@@ -34,9 +34,9 @@ namespace SalesUpdater.Web.Data.Controllers
         {
             try
             {
-                ViewBag.ProductFilter = new ProductFilterViewModel();
+                ViewBag.ProductFilter = new ProductViewFilterModel();
 
-                var productsCoreModels = await _productService.GetUsingPagedListAsync(page ?? 1, _pageSize);
+                var productsCoreModels = await _productService.GetPagedListAsync(page ?? 1, _pageSize);
 
                 var productsViewModels =
                         _mapper.Map<IPagedList<ProductViewModel>>(productsCoreModels);
@@ -52,33 +52,27 @@ namespace SalesUpdater.Web.Data.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> Find(ProductFilterViewModel productFilterViewModel)
+        public async Task<ActionResult> Find(ProductViewFilterModel productViewFilterModel)
         {
             try
             {
-                #region Validation
                 if (!ModelState.IsValid)
                 {
                     var coreModels = await _productService
-                        .GetUsingPagedListAsync(productFilterViewModel.Page ?? 1, _pageSize)
+                        .GetPagedListAsync(productViewFilterModel.Page ?? 1, _pageSize)
                         .ConfigureAwait(false);
 
                     var viewModels = _mapper.Map<IPagedList<ProductViewModel>>(coreModels);
 
                     return PartialView("Partial/_ProductTable", viewModels);
                 }
-                #endregion
 
-                #region Filter
                 var productsCoreModels = await _productService.Filter(
-                    _mapper.Map<ProductFilterCoreModel>(productFilterViewModel), _pageSize);
+                    _mapper.Map<ProductCoreFilterModel>(productViewFilterModel), _pageSize);
 
                 var productsViewModels = _mapper.Map<IPagedList<ProductViewModel>>(productsCoreModels);
-                #endregion
 
-                #region Filling ViewBag
-                ViewBag.ProductFilterNameValue = productFilterViewModel.Name;
-                #endregion
+                ViewBag.ProductFilterNameValue = productViewFilterModel.Name;
 
                 return PartialView("Partial/_ProductTable", productsViewModels);
             }
@@ -103,12 +97,10 @@ namespace SalesUpdater.Web.Data.Controllers
         {
             try
             {
-                #region Validation
                 if (!ModelState.IsValid)
                 {
                     return View(product);
                 }
-                #endregion
 
                 await _productService.AddAsync(_mapper.Map<ProductDTO>(product)).ConfigureAwait(false);
 
@@ -148,12 +140,10 @@ namespace SalesUpdater.Web.Data.Controllers
         {
             try
             {
-                #region Validation
                 if (!ModelState.IsValid)
                 {
                     return View(product);
                 }
-                #endregion
 
                 await _productService.UpdateAsync(_mapper.Map<ProductDTO>(product)).ConfigureAwait(false);
 

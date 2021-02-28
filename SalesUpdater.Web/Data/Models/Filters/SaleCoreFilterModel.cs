@@ -2,7 +2,7 @@
 
 namespace SalesUpdater.Web.Data.Models.Filters
 {
-    public class SaleFilterCoreModel : PagedListParameterCoreModel
+    public class SaleCoreFilterModel : PagedListParameterCoreModel
     {
         public DateTime? DateFrom { get; set; } = null;
         public DateTime? DateTo { get; set; } = null;
